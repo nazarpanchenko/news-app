@@ -48,6 +48,13 @@ export default Comments;
 Comments.propTypes = {
   comment: PropTypes.shape({
     text: PropTypes.string.isRequired,
-    kids: PropTypes.arrayOf(PropTypes.number),
+    kids: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        text: PropTypes.string.isRequired,
+        parent: PropTypes.number.isRequired,
+        kids: PropTypes.array,
+      })
+    ),
   }).isRequired,
 };
