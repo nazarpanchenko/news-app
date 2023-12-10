@@ -33,7 +33,7 @@ const Comments = ({ comment }) => {
         <List component="ul" disablePadding>
           {comment.kids &&
             comment.kids.map((childComment) => (
-              <ListItem key={childComment.id}>
+              <ListItem key={childComment.id} component="li">
                 <Comments comment={childComment} />
               </ListItem>
             ))}

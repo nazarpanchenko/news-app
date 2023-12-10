@@ -6,19 +6,20 @@ class CommentsProvider {
     const newsItem = await newsProvider.getOne(id);
     let commentsList = [];
 
-    if (newsItem.descendants) {
+    if (newsItem.kids) {
       commentsList = await Promise.all(
         newsItem.kids.map(async commentId => {
           const commentItem = await (
             await fetch(`${process.env.API_BASE_URI}/item/${commentId}.json?print=pretty`)
           ).json();
-          const commentItemDTO = new CommentItemDTO(commentItem);
+          const _kids = await this.getChildComments(commentItem.kids);
+          const commentItemDTO = new CommentItemDTO({ ...commentItem, kids: _kids });
 
           return {
             id: commentItemDTO.id,
             text: commentItemDTO.text,
             parent: commentItemDTO.parent,
-            kids: await this.getChildComments(commentItemDTO.kids),
+            kids: commentItemDTO.kids,
           };
         })
       );
@@ -30,20 +31,29 @@ class CommentsProvider {
     };
   }
 
-  async getChildComments(commentsList) {
-    let kids = [];
-    while (commentsList.kids) {
+  async getChildComments(nestedCommentIds) {
+    if (!Array.isArray(nestedCommentIds)) {
+      return;
+    }
+
+    let kids = [...nestedCommentIds];
+    if (kids) {
       kids = await Promise.all(
-        commentsList.map(async comment => {
+        nestedCommentIds.map(async kidId => {
+          const nestedCommentItem = await (
+            await fetch(`${process.env.API_BASE_URI}/item/${kidId}.json?print=pretty`)
+          ).json();
+
           return {
-            id: comment.id,
-            text: comment.text,
-            parent: comment.parent,
-            kids: await this.getChildComments(commentsList.kids),
+            id: nestedCommentItem.id,
+            text: nestedCommentItem.text,
+            parent: nestedCommentItem.parent,
+            kids: await this.getChildComments(nestedCommentItem.kids),
           };
         })
       );
     }
+
     return kids;
   }
 }

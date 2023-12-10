@@ -1,6 +1,8 @@
 class CommentItemDTO {
+  id;
   text;
   parent;
+  kids;
 
   constructor(commentItem) {
     this.id = commentItem.id;
