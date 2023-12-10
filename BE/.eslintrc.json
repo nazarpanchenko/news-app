@@ -1,0 +1,19 @@
+{
+  "root": true,
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
+  "env": {
+    "es2018": true,
+    "node": true
+  },
+  "plugins": [],
+  "extends": [
+    "eslint:recommended",
+    "prettier/prettier"
+  ],
+  "rules": {
+    "no-console": "warn",
+    "no-multiple-empty-lines": "warn"
+  }
+}
